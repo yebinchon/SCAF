@@ -111,10 +111,10 @@ public:
 
       const SCEV *diffStep = SE->getMinusSCEV(step2, step1);
       const ConstantRange diffStepRange = SE->getSignedRange(diffStep);
-      errs() << "base1: " << base1 << "\n";
-      errs() << "base2: " << base2 << "\n";
-      errs() << "step1: " << step1 << "\n";
-      errs() << "step2: " << step2 << "\n";
+      errs() << "base1: " << *base1 << "\n";
+      errs() << "base2: " << *base2 << "\n";
+      errs() << "step1: " << *step1 << "\n";
+      errs() << "step2: " << *step2 << "\n";
 
       // If the difference in bases is non-negative
       //     	errs() << " forward difference in bases: " << diffBasesRange <<
