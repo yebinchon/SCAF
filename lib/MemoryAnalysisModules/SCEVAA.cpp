@@ -468,7 +468,7 @@ public:
             if (auto constantPtrDiff = dyn_cast<SCEVConstant>(ptrDiff)) {
               if (constantPtrDiff->getAPInt() == 0) {
                 ++numNoAlias;
-                errs() << "YEBIN: NOALIAS FROM SCEV 0\n";
+                errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  0\n";
                 return NoAlias;
               }
             }
@@ -493,7 +493,7 @@ public:
       const SCEV *diff = SE->getMinusSCEV(s1, s2);
       if (alwaysGreaterThan(SE, diff, L, size2, size1)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS FROM SCEV 1\n";
+        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  1\n";
         return NoAlias;
       }
 
@@ -501,7 +501,7 @@ public:
       diff = SE->getMinusSCEV(s2, s1);
       if (alwaysGreaterThan(SE, diff, L, size1, size2)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS FROM SCEV 2\n";
+        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  2\n";
         return NoAlias;
       }
     } else {
@@ -526,11 +526,11 @@ public:
 
       if (stepGreaterThan(SE, L, s1, size1, s2, size2, multiDimArrayEligible)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS FROM SCEV 3\n";
+        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  3\n";
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS FROM SCEV 4\n";
+        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  4\n";
         return NoAlias;
       }
     }
