@@ -111,6 +111,10 @@ public:
 
       const SCEV *diffStep = SE->getMinusSCEV(step2, step1);
       const ConstantRange diffStepRange = SE->getSignedRange(diffStep);
+      errs() << "base1: " << base1 << "\n";
+      errs() << "base2: " << base2 << "\n";
+      errs() << "step1: " << step1 << "\n";
+      errs() << "step2: " << step2 << "\n";
 
       // If the difference in bases is non-negative
       //     	errs() << " forward difference in bases: " << diffBasesRange <<
@@ -145,6 +149,7 @@ public:
           return false;
 
         errs() << "ptr1: "; ptr1->dump();
+        errs() << "ptr2: "; ptr2->dump();
         errs() << "  ptrBase1: " << *ptrBase1 << "\n";
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
         errs() << "    ptrSCEV: "; ptrSCEV->dump();
@@ -152,7 +157,7 @@ public:
         const SCEVAddRecExpr *sAR = dyn_cast<SCEVAddRecExpr>(ptrSCEV);
 
         if (sAR) {
-          errs() << "      sAR: " << *sAR << "\n"; 
+          errs() << "        sAR: " << *sAR << "\n"; 
           // const SCEV *base = sAR->getStart();
           const SCEV *step = sAR->getStepRecurrence(*SE);
           errs() << "step: "; step->dump();
@@ -174,7 +179,7 @@ public:
               step, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
           const ConstantRange diffRange = SE->getSignedRange(diffSCEV);
           bool check = diffRange.getSignedMin().sge(0);
-          errs() << "    diffSCEV: " << *diffSCEV << "\n";
+          errs() << "     diffSCEV: " << *diffSCEV << "\n";
           errs() << "      diffRange: " << diffRange << "\n";
 
           if (check) {
