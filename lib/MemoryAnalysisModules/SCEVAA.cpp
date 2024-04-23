@@ -144,10 +144,10 @@ public:
         if (!ptrBase1)
           return false;
 
-        errs() << "ptr1: " << *ptr1 << "\n";
+        errs() << "ptr1: "; ptr1->dump();
         errs() << "  ptrBase1: " << *ptrBase1 << "\n";
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
-        errs() << "    ptrSCEV: " << *ptrSCEV << "\n";
+        errs() << "    ptrSCEV: "; ptrSCEV->dump();
 
         const SCEVAddRecExpr *sAR = dyn_cast<SCEVAddRecExpr>(ptrSCEV);
 
@@ -155,7 +155,7 @@ public:
           errs() << "      sAR: " << *sAR << "\n"; 
           // const SCEV *base = sAR->getStart();
           const SCEV *step = sAR->getStepRecurrence(*SE);
-          errs() << "step: " << *step << "\n";
+          errs() << "step: "; step->dump();
 
           const SCEV *ElementSize = SE->getConstant(size1);
           SmallVector<const SCEV *, 4> Subscripts;
@@ -182,7 +182,6 @@ public:
             LLVM_DEBUG(errs()
                        << "stepGreaterThan:\n"
                        << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
-            errs() << "    DIFFBASES: "  << diffBasesRange << "\n";
             return true;
           }
         }
