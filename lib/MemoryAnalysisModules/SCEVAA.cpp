@@ -171,11 +171,9 @@ public:
 
           if (check) {
             ++numNoAliasMD;
-            //LLVM_DEBUG(
-                errs()
+            LLVM_DEBUG(errs()
                        << "stepGreaterThan:\n"
-                       << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n";
-                       //);
+                       << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
             return true;
           }
         }
@@ -529,6 +527,9 @@ public:
       if (stepGreaterThan(SE, L, s1, size1, s2, size2, multiDimArrayEligible)) {
         ++numNoAlias;
         errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  3\n";
+        errs() << "     " << P1 << "\n"; 
+        errs() << "     " << P2 << "\n"; 
+        errs() << "Multidim: " << multiDimArrayEligible << ", Innermost: " << innerMostLoopAccess << "\n";
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
         ++numNoAlias;
