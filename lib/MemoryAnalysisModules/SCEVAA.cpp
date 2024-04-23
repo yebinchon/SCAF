@@ -128,6 +128,7 @@ public:
 
           if (minStepRange.getSignedMin().sge(size1)) {
             //            errs() << "===> Disjoint\n";
+            errs() << "    GREATERTHAN: " << diffStepRange << "\n";
             return true;
           }
         }
@@ -527,9 +528,9 @@ public:
       if (stepGreaterThan(SE, L, s1, size1, s2, size2, multiDimArrayEligible)) {
         ++numNoAlias;
         errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  3\n";
-        errs() << "     " << P1.ptr << "\n"; 
-        errs() << "     " << P2.ptr << "\n"; 
-        errs() << "Multidim: " << multiDimArrayEligible << ", Innermost: " << innerMostLoopAccess << "\n";
+        errs() << "     " << *P1.ptr << "\n"; 
+        errs() << "     " << *P2.ptr << "\n"; 
+        errs() << "Multidim: " << multiDimArrayEligible << "\n";
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
         ++numNoAlias;
