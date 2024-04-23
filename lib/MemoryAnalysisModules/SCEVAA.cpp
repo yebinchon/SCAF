@@ -120,8 +120,8 @@ public:
       errs() << "step2: " << *step2 << "\n";
 
       // If the difference in bases is non-negative
-           	errs() << " forward difference in bases: " << diffBasesRange <<
-           ' ' << *diffBases << '\n';
+      //     	errs() << " forward difference in bases: " << diffBasesRange <<
+      //     ' ' << *diffBases << '\n';
       if (diffBasesRange.getSignedMin().sge(0)) {
         // and, If the difference in steps is non-negative
         //        errs() << " forward difference in steps: " << diffStepRange <<
@@ -144,7 +144,9 @@ public:
       // handle SCEVs with different subloops and semantically equivalent but
       // syntactically hard to process bases). Not applicable for inner most
       // loop accesses (useful for multi-dim array accesses)
-      if (diffStepRange.getSignedMin() == 0 && diffBasesRange.getSignedMin() == 0 && multiDimArrayEligible) {
+      // FIXME: incorrectly marks accesses with different bases and equal stride as noalias
+      // e.g.: A[i-1][j] and A[i][j] for i
+      if (diffStepRange.getSignedMin() == 0 && diffBase.isZero() && multiDimArrayEligible) {
 
         const SCEVUnknown *ptrBase1 =
             dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr1));
