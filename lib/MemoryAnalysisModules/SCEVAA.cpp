@@ -111,6 +111,9 @@ public:
 
       const SCEV *diffStep = SE->getMinusSCEV(step2, step1);
       const ConstantRange diffStepRange = SE->getSignedRange(diffStep);
+
+      errs() << " ptr1: " << *ptr1 << "\n";
+      errs() << " ptr2: " << *ptr2 << "\n";
       errs() << "base1: " << *base1 << "\n";
       errs() << "base2: " << *base2 << "\n";
       errs() << "step1: " << *step1 << "\n";
