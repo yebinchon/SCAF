@@ -120,8 +120,8 @@ public:
       errs() << "step2: " << *step2 << "\n";
 
       // If the difference in bases is non-negative
-      //     	errs() << " forward difference in bases: " << diffBasesRange <<
-      //     ' ' << *diffBases << '\n';
+           	errs() << " forward difference in bases: " << diffBasesRange <<
+           ' ' << *diffBases << '\n';
       if (diffBasesRange.getSignedMin().sge(0)) {
         // and, If the difference in steps is non-negative
         //        errs() << " forward difference in steps: " << diffStepRange <<
