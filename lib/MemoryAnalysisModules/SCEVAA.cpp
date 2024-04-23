@@ -144,7 +144,7 @@ public:
       // handle SCEVs with different subloops and semantically equivalent but
       // syntactically hard to process bases). Not applicable for inner most
       // loop accesses (useful for multi-dim array accesses)
-      if (diffStepRange.getSignedMin() == 0 && multiDimArrayEligible) {
+      if (diffStepRange.getSignedMin() == 0 && diffBasesRange.getSignedMin() == 0 && multiDimArrayEligible) {
 
         const SCEVUnknown *ptrBase1 =
             dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr1));
