@@ -128,7 +128,6 @@ public:
 
           if (minStepRange.getSignedMin().sge(size1)) {
             //            errs() << "===> Disjoint\n";
-            errs() << "    GREATERTHAN: " << diffStepRange << "\n";
             return true;
           }
         }
@@ -175,6 +174,7 @@ public:
             LLVM_DEBUG(errs()
                        << "stepGreaterThan:\n"
                        << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
+            errs() << "    DIFFBASES: "  << diffBases << "\n";
             return true;
           }
         }
@@ -530,7 +530,7 @@ public:
         errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  3\n";
         errs() << "     " << *P1.ptr << "\n"; 
         errs() << "     " << *P2.ptr << "\n"; 
-        errs() << "Multidim: " << multiDimArrayEligible << "\n";
+        errs() << "Multidim: " << multiDimArrayEligible << "\n\n";
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
         ++numNoAlias;
