@@ -174,7 +174,7 @@ public:
             LLVM_DEBUG(errs()
                        << "stepGreaterThan:\n"
                        << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
-            errs() << "    DIFFBASES: "  << diffBases << "\n";
+            errs() << "    DIFFBASES: "  << *diffBases << "\n";
             return true;
           }
         }
