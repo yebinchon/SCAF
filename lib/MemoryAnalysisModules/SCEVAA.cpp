@@ -144,18 +144,24 @@ public:
         if (!ptrBase1)
           return false;
 
+        errs() << "ptr1: " << *ptr1 << "\n";
+        errs() << "  ptrBase1: " << *ptrBase1 << "\n";
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
+        errs() << "    ptrSCEV: " << *ptrSCEV << "\n";
 
         const SCEVAddRecExpr *sAR = dyn_cast<SCEVAddRecExpr>(ptrSCEV);
 
         if (sAR) {
+          errs() << "      sAR: " << *sAR << "\n"; 
           // const SCEV *base = sAR->getStart();
           const SCEV *step = sAR->getStepRecurrence(*SE);
+          errs() << "step: " << *step << "\n";
 
           const SCEV *ElementSize = SE->getConstant(size1);
           SmallVector<const SCEV *, 4> Subscripts;
           SmallVector<const SCEV *, 4> Sizes;
           SE->delinearize(sAR, Subscripts, Sizes, ElementSize);
+          errs() << "  ElementSize: " << *ElementSize << "\n";
 
           if (Sizes.size() < 2)
             return false;
@@ -168,13 +174,15 @@ public:
               step, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
           const ConstantRange diffRange = SE->getSignedRange(diffSCEV);
           bool check = diffRange.getSignedMin().sge(0);
+          errs() << "    diffSCEV: " << *diffSCEV << "\n";
+          errs() << "      diffRange: " << diffRange << "\n";
 
           if (check) {
             ++numNoAliasMD;
             LLVM_DEBUG(errs()
                        << "stepGreaterThan:\n"
                        << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
-            errs() << "    DIFFBASES: "  << *diffBases << "\n";
+            errs() << "    DIFFBASES: "  << diffBasesRange << "\n";
             return true;
           }
         }
