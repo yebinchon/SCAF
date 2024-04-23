@@ -171,9 +171,11 @@ public:
 
           if (check) {
             ++numNoAliasMD;
-            LLVM_DEBUG(errs()
+            //LLVM_DEBUG(
+                errs()
                        << "stepGreaterThan:\n"
-                       << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
+                       << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n";
+                       //);
             return true;
           }
         }
