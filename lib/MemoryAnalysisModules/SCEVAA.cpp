@@ -151,8 +151,6 @@ public:
         if (!ptrBase1)
           return false;
 
-        errs() << "ptr1: "; ptr1->dump();
-        errs() << "ptr2: "; ptr2->dump();
         errs() << "  ptrBase1: " << *ptrBase1 << "\n";
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
         errs() << "    ptrSCEV: "; ptrSCEV->dump();
@@ -170,6 +168,7 @@ public:
           SmallVector<const SCEV *, 4> Sizes;
           SE->delinearize(sAR, Subscripts, Sizes, ElementSize);
           errs() << "  ElementSize: " << *ElementSize << "\n";
+          errs() << "  sAR: " << *sAR << "\n"; 
 
           if (Sizes.size() < 2)
             return false;
