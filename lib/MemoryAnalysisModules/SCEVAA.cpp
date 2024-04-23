@@ -146,7 +146,7 @@ public:
       // loop accesses (useful for multi-dim array accesses)
       // FIXME: incorrectly marks accesses with different bases and equal stride as noalias
       // e.g.: A[i-1][j] and A[i][j] for i
-      if (diffStepRange.getSignedMin() == 0 && diffBases.isZero() && multiDimArrayEligible) {
+      if (diffStepRange.getSignedMin() == 0 && diffBases->isZero() && multiDimArrayEligible) {
 
         const SCEVUnknown *ptrBase1 =
             dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr1));
