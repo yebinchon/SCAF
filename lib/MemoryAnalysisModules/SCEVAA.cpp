@@ -402,6 +402,7 @@ public:
 
     BasicBlock *header = L->getHeader();
     Function *fcn = header->getParent();
+    errs() << "QUERY FOR " << header->getName() << "\n";
 
     ModuleLoops &mloops = getAnalysis<ModuleLoops>();
     ScalarEvolution *SE = &mloops.getAnalysis_ScalarEvolution(fcn);
@@ -542,6 +543,8 @@ public:
         errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  3\n";
         errs() << "     " << *P1.ptr << "\n"; 
         errs() << "     " << *P2.ptr << "\n"; 
+        errs() << "     " << *s1 << "\n"; 
+        errs() << "     " << *s2 << "\n"; 
         errs() << "Multidim: " << multiDimArrayEligible << "\n\n";
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
