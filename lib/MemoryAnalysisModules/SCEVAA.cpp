@@ -207,7 +207,7 @@ public:
             errs() << "     step1: " << *step1 << "\n";
             errs() << "     step2: " << *step2 << "\n";
             errs() << "  ptrBase1: " << *ptrBase1 << "\n";
-            errs() << "      step: " << *step << "\n";
+            errs() << "      step: " << *step1 << "\n";
             errs() << " steprange: " << diffStepRange << "\n";
             for(int i = 0; i < Sizes.size(); i++) {
               errs() << "       size[" << i << "]: " << *Sizes[i] << "\n";
