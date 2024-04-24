@@ -153,24 +153,18 @@ public:
         if (!ptrBase1)
           return false;
 
-        errs() << "  ptrBase1: " << *ptrBase1 << "\n";
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
-        errs() << "    ptrSCEV: "; ptrSCEV->dump();
 
         const SCEVAddRecExpr *sAR = dyn_cast<SCEVAddRecExpr>(ptrSCEV);
 
         if (sAR) {
-          errs() << "        sAR: " << *sAR << "\n"; 
           // const SCEV *base = sAR->getStart();
           const SCEV *step = sAR->getStepRecurrence(*SE);
-          errs() << "step: "; step->dump();
 
           const SCEV *ElementSize = SE->getConstant(size1);
           SmallVector<const SCEV *, 4> Subscripts;
           SmallVector<const SCEV *, 4> Sizes;
           SE->delinearize(sAR, Subscripts, Sizes, ElementSize);
-          errs() << "  ElementSize: " << *ElementSize << "\n";
-          errs() << "  sAR: " << *sAR << "\n"; 
 
           if (Sizes.size() < 2)
             return false;
@@ -178,13 +172,16 @@ public:
           // relevant size is the second to last size (the last one is equal to
           // the elementSize). the other sizes refer to outer loops if any
           unsigned relevantSizeIndex = Sizes.size() - 2;
+          for(int i = 0; i < Sizes.size(); i++) {
+            errs() << "size: " << Sizes[i] << "\n";
+            errs() << "subscript: " << Subscripts[i] << "\n";
+          }
 
           const SCEV *diffSCEV = SE->getMinusSCEV(
               step, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
           const ConstantRange diffRange = SE->getSignedRange(diffSCEV);
           bool check = diffRange.getSignedMin().sge(0);
-          errs() << "     diffSCEV: " << *diffSCEV << "\n";
-          errs() << "      diffRange: " << diffRange << "\n";
+          errs() << "   diffSCEV: " << *diffSCEV << "\n";
 
           if (check) {
             ++numNoAliasMD;
@@ -406,7 +403,6 @@ public:
 
     BasicBlock *header = L->getHeader();
     Function *fcn = header->getParent();
-    errs() << "QUERY FOR " << header->getName() << "\n";
 
     ModuleLoops &mloops = getAnalysis<ModuleLoops>();
     ScalarEvolution *SE = &mloops.getAnalysis_ScalarEvolution(fcn);
