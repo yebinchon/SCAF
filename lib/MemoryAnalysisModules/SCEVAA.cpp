@@ -173,8 +173,8 @@ public:
           // the elementSize). the other sizes refer to outer loops if any
           unsigned relevantSizeIndex = Sizes.size() - 2;
           for(int i = 0; i < Sizes.size(); i++) {
-            errs() << "size: " << Sizes[i] << "\n";
-            errs() << "subscript: " << Subscripts[i] << "\n";
+            errs() << "size: " << *Sizes[i] << "\n";
+            errs() << "subscript: " << *Subscripts[i] << "\n";
           }
 
           const SCEV *diffSCEV = SE->getMinusSCEV(
