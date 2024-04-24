@@ -536,11 +536,11 @@ public:
         ++numNoAlias;
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
-          errs() << *P1.ptr << "\n-->   " << *P2.ptr << "\n   May be disjoint, but disproved with something else\n";
+          errs() << *P1.ptr << "\n-->   " << *P2.ptr << "\n   May be disjoint, but disproved with something else\n\n";
         ++numNoAlias;
         return NoAlias;
       } else {
-          errs() << *P1.ptr << "\n-->   " << *P2.ptr << "\n   May be disjoint, please check\n";
+          errs() << *P1.ptr << "\n-->   " << *P2.ptr << "\n   May be disjoint, please check\n\n";
       }
     }
 
