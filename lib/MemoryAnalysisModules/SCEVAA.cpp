@@ -112,13 +112,6 @@ public:
       const SCEV *diffStep = SE->getMinusSCEV(step2, step1);
       const ConstantRange diffStepRange = SE->getSignedRange(diffStep);
 
-      errs() << " ptr1: " << *ptr1 << "\n";
-      errs() << " ptr2: " << *ptr2 << "\n";
-      errs() << "base1: " << *base1 << "\n";
-      errs() << "base2: " << *base2 << "\n";
-      errs() << "step1: " << *step1 << "\n";
-      errs() << "step2: " << *step2 << "\n";
-
       // If the difference in bases is non-negative
       //     	errs() << " forward difference in bases: " << diffBasesRange <<
       //     ' ' << *diffBases << '\n';
@@ -144,9 +137,10 @@ public:
       // handle SCEVs with different subloops and semantically equivalent but
       // syntactically hard to process bases). Not applicable for inner most
       // loop accesses (useful for multi-dim array accesses)
-      // FIXME: incorrectly marks accesses with different bases and equal stride as noalias
+      // FIXME: what cases is this supposed to disprove?
+      // incorrectly marks accesses with different bases and equal stride as noalias
       // e.g.: A[i-1][j] and A[i][j] for i
-      if (diffStepRange.getSignedMin() == 0 && diffBases->isZero() && multiDimArrayEligible) {
+      if (diffStepRange.getSignedMin() == 0 && multiDimArrayEligible) {
 
         const SCEVUnknown *ptrBase1 =
             dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr1));
@@ -172,23 +166,26 @@ public:
           // relevant size is the second to last size (the last one is equal to
           // the elementSize). the other sizes refer to outer loops if any
           unsigned relevantSizeIndex = Sizes.size() - 2;
-          for(int i = 0; i < Sizes.size(); i++) {
-            errs() << "size: " << *Sizes[i] << "\n";
-            errs() << "subscript: " << *Subscripts[i] << "\n";
-          }
 
           const SCEV *diffSCEV = SE->getMinusSCEV(
               step, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
           const ConstantRange diffRange = SE->getSignedRange(diffSCEV);
           bool check = diffRange.getSignedMin().sge(0);
-          errs() << "   diffSCEV: " << *diffSCEV << "\n";
 
           if (check) {
-            ++numNoAliasMD;
-            LLVM_DEBUG(errs()
-                       << "stepGreaterThan:\n"
-                       << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
-            return true;
+            errs() << "ALERT!\n   " << *ptr1 << "\n-->   " << *ptr2 << "\nMay be disjoint\n";
+
+            errs() << "     base1: " << *base1 << "\n";
+            errs() << "     base2: " << *base2 << "\n";
+            errs() << "     step1: " << *step1 << "\n";
+            errs() << "     step2: " << *step2 << "\n";
+            errs() << "  ptrBase1: " << *ptrBase1 << "\n";
+            errs() << "      step: " << *step << "\n"
+            //++numNoAliasMD;
+            //LLVM_DEBUG(errs()
+            //           << "stepGreaterThan:\n"
+            //           << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
+            //return true;
           }
         }
       }
@@ -482,7 +479,6 @@ public:
             if (auto constantPtrDiff = dyn_cast<SCEVConstant>(ptrDiff)) {
               if (constantPtrDiff->getAPInt() == 0) {
                 ++numNoAlias;
-                errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  0\n";
                 return NoAlias;
               }
             }
@@ -507,7 +503,6 @@ public:
       const SCEV *diff = SE->getMinusSCEV(s1, s2);
       if (alwaysGreaterThan(SE, diff, L, size2, size1)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  1\n";
         return NoAlias;
       }
 
@@ -515,7 +510,6 @@ public:
       diff = SE->getMinusSCEV(s2, s1);
       if (alwaysGreaterThan(SE, diff, L, size1, size2)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  2\n";
         return NoAlias;
       }
     } else {
@@ -540,16 +534,9 @@ public:
 
       if (stepGreaterThan(SE, L, s1, size1, s2, size2, multiDimArrayEligible)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  3\n";
-        errs() << "     " << *P1.ptr << "\n"; 
-        errs() << "     " << *P2.ptr << "\n"; 
-        errs() << "     " << *s1 << "\n"; 
-        errs() << "     " << *s2 << "\n"; 
-        errs() << "Multidim: " << multiDimArrayEligible << "\n\n";
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
         ++numNoAlias;
-        errs() << "YEBIN: NOALIAS " << L->getHeader()->getName() << "  4\n";
         return NoAlias;
       }
     }
