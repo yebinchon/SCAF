@@ -173,7 +173,7 @@ public:
           bool check = diffRange.getSignedMin().sge(0);
 
           if (check) {
-            errs() << "ALERT! in " << L->getHeader()->getName() << "\n   " << *ptr1 << "\n-->   " << *ptr2 << "\n   May be disjoint\n";
+            errs() << "ALERT! in " << L->getName() << "\n   " << *ptr1 << "\n-->   " << *ptr2 << "\n   May be disjoint\n";
 
             errs() << "     base1: " << *base1 << "\n";
             errs() << "     base2: " << *base2 << "\n";
