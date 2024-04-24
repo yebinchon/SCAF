@@ -155,7 +155,11 @@ public:
 
         const SCEVAddRecExpr *sAR = dyn_cast<SCEVAddRecExpr>(ptrSCEV);
 
-        if (sAR) {
+        const SCEV *ptrSCEV2 = SE->getMinusSCEV(ptr2, ptrBase2);
+
+        const SCEVAddRecExpr *sAR2 = dyn_cast<SCEVAddRecExpr>(ptrSCEV2);
+
+        if (sAR && sAR2) {
           // const SCEV *base = sAR->getStart();
           const SCEV *step = sAR->getStepRecurrence(*SE);
 
@@ -163,6 +167,13 @@ public:
           SmallVector<const SCEV *, 4> Subscripts;
           SmallVector<const SCEV *, 4> Sizes;
           SE->delinearize(sAR, Subscripts, Sizes, ElementSize);
+
+          const SCEV *step2 = sAR2->getStepRecurrence(*SE);
+
+          const SCEV *ElementSize2 = SE->getConstant(size2);
+          SmallVector<const SCEV *, 4> Subscripts2;
+          SmallVector<const SCEV *, 4> Sizes2;
+          SE->delinearize(sAR2, Subscripts2, Sizes2, ElementSize2);
 
           if (Sizes.size() < 2)
             return false;
@@ -184,11 +195,13 @@ public:
             errs() << "     step1: " << *step1 << "\n";
             errs() << "     step2: " << *step2 << "\n";
             errs() << "  ptrBase1: " << *ptrBase1 << "\n";
-            errs() << "  ptrBase2: " << *ptrBase2 << "\n";
             errs() << "      step: " << *step << "\n";
+            errs() << " steprange: " << diffStepRange << "\n";
             for(int i = 0; i < Sizes.size(); i++) {
               errs() << "       size[" << i << "]: " << *Sizes[i] << "\n";
               errs() << "        sub[" << i << "]: " << *Subscripts[i] << "\n";
+              errs() << "      size2[" << i << "]: " << *Sizes2[i] << "\n";
+              errs() << "       sub2[" << i << "]: " << *Subscripts2[i] << "\n";
             }
             //++numNoAliasMD;
             //LLVM_DEBUG(errs()
