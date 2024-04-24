@@ -150,6 +150,8 @@ public:
             dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr2));
         if (!ptrBase2)
           return false;
+        if(ptrBase1 != ptrBase2)
+          return false;
 
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
 
@@ -182,12 +184,17 @@ public:
           // the elementSize). the other sizes refer to outer loops if any
           unsigned relevantSizeIndex = Sizes.size() - 2;
 
+          const SCEV *diffIndex = SE->getMinusSCEV(Subscripts[relevantSizeIndex], Subscripts2[relevantSizeIndex]);
+          bool sameIndex = diffIndex->isZero(); 
+
+
+          // FIXME: what is this part doing?
           const SCEV *diffSCEV = SE->getMinusSCEV(
               step, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
           const ConstantRange diffRange = SE->getSignedRange(diffSCEV);
           bool check = diffRange.getSignedMin().sge(0);
 
-          if (check) {
+          if (check && sameIndex) {
             errs() << "ALERT! in " << L->getName() << " : " << *L->getHeader()->getFirstNonPHI() << "\n";
 
             errs() << "     base1: " << *base1 << "\n";
