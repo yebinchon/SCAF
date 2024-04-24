@@ -173,7 +173,7 @@ public:
           bool check = diffRange.getSignedMin().sge(0);
 
           if (check) {
-            errs() << "ALERT! in " << L->getName() << " : " << *L->getHeader()->getFirstNonPHI() << "\n   ";
+            errs() << "ALERT! in " << L->getName() << " : " << *L->getHeader()->getFirstNonPHI() << "\n";
 
             errs() << "     base1: " << *base1 << "\n";
             errs() << "     base2: " << *base2 << "\n";
