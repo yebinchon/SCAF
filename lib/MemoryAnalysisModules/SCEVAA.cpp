@@ -137,7 +137,7 @@ public:
       // handle SCEVs with different subloops and semantically equivalent but
       // syntactically hard to process bases). Not applicable for inner most
       // loop accesses (useful for multi-dim array accesses)
-      // FIXME: what cases is this supposed to disprove?
+      // FIXME: should disprove cases such as: A[i][j] and A[i][j-1] for i
       // incorrectly marks accesses with different bases and equal stride as noalias
       // e.g.: A[i-1][j] and A[i][j] for i
       if (diffStepRange.getSignedMin() == 0 && multiDimArrayEligible) {
@@ -145,6 +145,10 @@ public:
         const SCEVUnknown *ptrBase1 =
             dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr1));
         if (!ptrBase1)
+          return false;
+        const SCEVUnknown *ptrBase2 =
+            dyn_cast<SCEVUnknown>(SE->getPointerBase(ptr2));
+        if (!ptrBase2)
           return false;
 
         const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
@@ -180,7 +184,12 @@ public:
             errs() << "     step1: " << *step1 << "\n";
             errs() << "     step2: " << *step2 << "\n";
             errs() << "  ptrBase1: " << *ptrBase1 << "\n";
+            errs() << "  ptrBase2: " << *ptrBase2 << "\n";
             errs() << "      step: " << *step << "\n";
+            for(int i = 0; i < Sizes.size(); i++) {
+              errs() << "       size[" << i << "]: " << *Sizes[i] << "\n";
+              errs() << "        sub[" << i << "]: " << *Subscripts[i] << "\n";
+            }
             //++numNoAliasMD;
             //LLVM_DEBUG(errs()
             //           << "stepGreaterThan:\n"
