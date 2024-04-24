@@ -153,24 +153,22 @@ public:
         if(ptrBase1 != ptrBase2)
           return false;
 
-        const SCEV *ptrSCEV = SE->getMinusSCEV(ptr1, ptrBase1);
+        const SCEV *ptrSCEV1 = SE->getMinusSCEV(ptr1, ptrBase1);
 
-        const SCEVAddRecExpr *sAR = dyn_cast<SCEVAddRecExpr>(ptrSCEV);
+        const SCEVAddRecExpr *sAR1 = dyn_cast<SCEVAddRecExpr>(ptrSCEV1);
 
         const SCEV *ptrSCEV2 = SE->getMinusSCEV(ptr2, ptrBase2);
 
         const SCEVAddRecExpr *sAR2 = dyn_cast<SCEVAddRecExpr>(ptrSCEV2);
 
-        if (sAR && sAR2) {
+        if (sAR1 && sAR2) {
           // const SCEV *base = sAR->getStart();
-          const SCEV *step = sAR->getStepRecurrence(*SE);
+          const SCEV *step1 = sAR1->getStepRecurrence(*SE);
 
           const SCEV *ElementSize = SE->getConstant(size1);
           SmallVector<const SCEV *, 4> Subscripts;
           SmallVector<const SCEV *, 4> Sizes;
-          SE->delinearize(sAR, Subscripts, Sizes, ElementSize);
-
-          const SCEV *step2 = sAR2->getStepRecurrence(*SE);
+          SE->delinearize(sAR1, Subscripts, Sizes, ElementSize);
 
           const SCEV *ElementSize2 = SE->getConstant(size2);
           SmallVector<const SCEV *, 4> Subscripts2;
@@ -190,11 +188,18 @@ public:
 
           // FIXME: what is this part doing?
           const SCEV *diffSCEV = SE->getMinusSCEV(
-              step, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
+              step1, SE->getMulExpr(ElementSize, Sizes[relevantSizeIndex]));
           const ConstantRange diffRange = SE->getSignedRange(diffSCEV);
           bool check = diffRange.getSignedMin().sge(0);
 
           if (check && sameIndex) {
+            ++numNoAliasMD;
+            LLVM_DEBUG(errs()
+                       << "stepGreaterThan:\n"
+                       << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
+            return true;
+          }
+          else {
             errs() << "ALERT! in " << L->getName() << " : " << *L->getHeader()->getFirstNonPHI() << "\n";
 
             errs() << "     base1: " << *base1 << "\n";
@@ -210,11 +215,6 @@ public:
               errs() << "      size2[" << i << "]: " << *Sizes2[i] << "\n";
               errs() << "       sub2[" << i << "]: " << *Subscripts2[i] << "\n";
             }
-            //++numNoAliasMD;
-            //LLVM_DEBUG(errs()
-            //           << "stepGreaterThan:\n"
-            //           << *ptr1 << " and " << *ptr2 << "\n===> Disjoint\n");
-            //return true;
           }
         }
       }
