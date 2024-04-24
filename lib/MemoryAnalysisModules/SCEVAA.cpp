@@ -173,7 +173,7 @@ public:
           bool check = diffRange.getSignedMin().sge(0);
 
           if (check) {
-            errs() << "ALERT! in " << L->getName() << " : " << *L->getHeader()->getFirstNonPHI() << "\n   " << *ptr1 << "\n-->   " << *ptr2 << "\n   May be disjoint\n";
+            errs() << "ALERT! in " << L->getName() << " : " << *L->getHeader()->getFirstNonPHI() << "\n   ";
 
             errs() << "     base1: " << *base1 << "\n";
             errs() << "     base2: " << *base2 << "\n";
@@ -536,8 +536,11 @@ public:
         ++numNoAlias;
         return NoAlias;
       } else if (notOverlappingStrides(SE, L, s1, size1, s2, size2)) {
+          errs() << *P1.ptr << "\n-->   " << *P2.ptr << "\n   May be disjoint, but disproved with something else\n";
         ++numNoAlias;
         return NoAlias;
+      } else {
+          errs() << *P1.ptr << "\n-->   " << *P2.ptr << "\n   May be disjoint, please check\n";
       }
     }
 
